@@ -77,7 +77,7 @@ resource "aws_network_acl_rule" "ephemeral_out" {
 }
 
 # allow YUM and AWS requests outbound
-resource "aws_network_acl_rule" "http_out" {
+resource "aws_network_acl_rule" "https_out" {
   network_acl_id = "${aws_network_acl.ssetest.id}"
   rule_number    = 200
   egress         = true

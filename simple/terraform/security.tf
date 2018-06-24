@@ -13,64 +13,6 @@ resource "aws_default_security_group" "test_default" {
 }
 
 # ----------------------------------------------------------------------------------------
-#  NACL for the test subnet
-# ----------------------------------------------------------------------------------------
-
-resource "aws_network_acl" "ssetest" {
-  vpc_id     = "${aws_vpc.test_vpc.id}"
-  subnet_ids = ["${aws_subnet.ssetest.id}"]
-  tags       = "${merge(map("Name", "${var.base_name}"), var.tags)}"
-}
-
-# accept SSH requests inbound
-resource "aws_network_acl_rule" "ssh_in" {
-  network_acl_id = "${aws_network_acl.ssetest.id}"
-  rule_number    = 100
-  egress         = false
-  protocol       = "tcp"
-  rule_action    = "allow"
-  cidr_block     = "${var.inbound_cidr}"
-  from_port      = 22
-  to_port        = 22
-}
-
-# allow responses to SSH requests outbound
-resource "aws_network_acl_rule" "ephemeral_out" {
-  network_acl_id = "${aws_network_acl.ssetest.id}"
-  rule_number    = 100
-  egress         = true
-  protocol       = "tcp"
-  rule_action    = "allow"
-  cidr_block     = "${var.inbound_cidr}"
-  from_port      = 1024
-  to_port        = 65535
-}
-
-# allow YUM and AWS API requests outbound
-resource "aws_network_acl_rule" "https_out" {
-  network_acl_id = "${aws_network_acl.ssetest.id}"
-  rule_number    = 200
-  egress         = true
-  protocol       = "tcp"
-  rule_action    = "allow"
-  cidr_block     = "0.0.0.0/0"
-  from_port      = 443
-  to_port        = 443
-}
-
-# accept responses to YUM and API requests inbound
-resource "aws_network_acl_rule" "ephemeral_in" {
-  network_acl_id = "${aws_network_acl.ssetest.id}"
-  rule_number    = 200
-  egress         = false
-  protocol       = "tcp"
-  rule_action    = "allow"
-  cidr_block     = "0.0.0.0/0"
-  from_port      = 1024
-  to_port        = 65535
-}
-
-# ----------------------------------------------------------------------------------------
 # setup instance profile
 # ----------------------------------------------------------------------------------------
 resource "aws_iam_role" "testhost" {
@@ -118,9 +60,9 @@ resource "aws_iam_policy" "testhost" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "s3access" {
+resource "aws_iam_role_policy_attachment" "testhost" {
   role       = "${aws_iam_role.testhost.name}"
-  policy_arn = "${aws_iam_policy.s3access.arn}"
+  policy_arn = "${aws_iam_policy.testhost.arn}"
 }
 
 resource "aws_iam_instance_profile" "testhost" {
