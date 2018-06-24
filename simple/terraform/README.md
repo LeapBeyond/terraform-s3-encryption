@@ -3,8 +3,7 @@
 These scripts setup a S3 bucket with SSE (server side encryption) enabled, and an EC2 instance that is able to read/write with that bucket. There's a reasonable amount of subtlety in this, and some efforts made to demonstrate good security practices that I will talk through below.
 
 ## Usage
-There are two wrapper scripts that setup and tear down the assets. These assume that you are running from a unix-like environment (they were tested
-  with MacOS), and that there are credentials available granting a pretty high - preferably full administration - access to the target AWS account. They also assume that you have a recent version of [Terraform](https://terraform.io) installed, and the AWS CLI.
+There are two wrapper scripts that setup and tear down the assets. These assume that you are running from a unix-like environment (they were tested with MacOS), and that there are credentials available granting a pretty high - preferably full administration - access to the target AWS account. They also assume that you have a recent version of  [Terraform](https://terraform.io) installed, and the AWS CLI.
 
 To use the scripts, first copy `env.rc.template` to `env.rc` and replace values as required:
 
@@ -78,6 +77,22 @@ This demonstration is framed to illustrate several security best practices, in p
  - constraining bucket access
 
 There are best practices, which I will discuss as we go along, and try to indicate where there are risks.
+
+The overall set of assets that are setup are pretty complete:
+
+ - VPC
+ - routing table
+ - internet gateway
+ - S3 VPC Endpoint gateway
+ - Subnet
+ - NACL for the Subnet
+ - EC2 instance
+ - Security Group for the instance
+ - IAM Role and Instance profile for the instance
+ - KMS key
+ - S3 bucket with SSE enabled
+
+Note of course for a full fledged system, CloudTrail, VPC Flow Logs and S3 object logging should be added, at a minimum.
 
 ### network.tf
 Building fresh infrastructure into a fresh VPC is a good way to prevent inheriting existing network and security problems (as long as you are aware that not all assets are associated with a VPC). It also allows creation of precise and simple routing tables. Ideally the EC2 instance would reach the Internet via a NAT gateway, which is not done here. Going a little further, ideally the EC2 instance is placed in a subnet that does not allow public IP addresses, and the instance reached - if needed - via some sort of bastion or jump host.

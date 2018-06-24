@@ -23,4 +23,3 @@ The following is a collection of materials around S3 policies in general, and so
  - <http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition.html>
  - <http://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket-policies.html>
  - <https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html>
-
