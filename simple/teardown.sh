@@ -4,12 +4,12 @@ cd `dirname $0`
 [[ -s ./env.rc ]] && source ./env.rc
 
 
-# echo "======== emptying buckets ========"
-#
-# for BUCKET in $(aws s3api list-buckets --output table --query 'Buckets[*].Name' | grep s3ec2test | sed -e 's/ //g' -e 's/|//g')
-# do
-#   aws s3 rm s3://$BUCKET --recursive
-# done
+echo "======== emptying buckets ========"
+
+for BUCKET in $(aws s3api list-buckets --output table --query 'Buckets[*].Name' | grep $BASE_NAME | sed -e 's/ //g' -e 's/|//g')
+do
+  aws s3 rm s3://$BUCKET --recursive
+done
 
 echo "======= terraform destroy ======="
 

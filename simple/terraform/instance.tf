@@ -22,7 +22,7 @@ resource "aws_instance" "testhost" {
   subnet_id     = "${aws_subnet.ssetest.id}"
 
   vpc_security_group_ids = [
-    "${aws_security_group.testhost.id}"
+    "${aws_security_group.testhost.id}",
   ]
 
   iam_instance_profile = "${aws_iam_instance_profile.testhost.name}"
@@ -52,16 +52,18 @@ resource "aws_security_group" "testhost" {
     protocol    = "tcp"
     cidr_blocks = ["${var.inbound_cidr}"]
   }
+
   egress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = [ "52.95.0.0/16" ]
+    cidr_blocks = ["52.95.0.0/16"]
   }
+
   egress {
-    from_port = 443
-    to_port   = 443
-    protocol  = "tcp"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["${data.aws_ip_ranges.s3ip.cidr_blocks}", "${data.aws_ip_ranges.s3ip-useast1.cidr_blocks}"]
   }
 

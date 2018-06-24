@@ -23,9 +23,9 @@ terraform apply -auto-approve \
   -var "inbound_cidr=$CIDR"
 cd ..
 
-# echo "======== populating buckets ========"
-#
-# for BUCKET in $(aws s3api list-buckets --output table --query 'Buckets[*].Name' | grep s3ec2test | sed -e 's/ //g' -e 's/|//g')
-# do
-#   aws s3 cp data/test.txt s3://$BUCKET/test.txt
-# done
+echo "======== populating buckets ========"
+
+for BUCKET in $(aws s3api list-buckets --output table --query 'Buckets[*].Name' | grep $BASE_NAME | sed -e 's/ //g' -e 's/|//g')
+do
+  aws s3 cp data/test.txt s3://$BUCKET/test.txt
+done
