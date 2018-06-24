@@ -31,3 +31,13 @@ variable "root_vol_size" {
 variable "instance_type" {
   default = "t2.micro"
 }
+
+data "aws_ip_ranges" "s3ip" {
+  regions  = ["${var.aws_region}"]
+  services = ["s3"]
+}
+
+data "aws_ip_ranges" "s3ip-useast1" {
+  regions  = ["us-east-1"]
+  services = ["s3"]
+}

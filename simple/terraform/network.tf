@@ -88,6 +88,17 @@ resource "aws_network_acl_rule" "https_out" {
   to_port        = 443
 }
 
+resource "aws_network_acl_rule" "http_out" {
+  network_acl_id = "${aws_network_acl.ssetest.id}"
+  rule_number    = 210
+  egress         = true
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "52.95.0.0/16"
+  from_port      = 80
+  to_port        = 80
+}
+
 # accept responses to YUM and AWS requests inbound
 resource "aws_network_acl_rule" "ephemeral_in" {
   network_acl_id = "${aws_network_acl.ssetest.id}"
