@@ -41,3 +41,17 @@ data "aws_ip_ranges" "s3ip-useast1" {
   regions  = ["us-east-1"]
   services = ["s3"]
 }
+
+data "aws_ami" "target_ami" {
+  most_recent = true
+
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+
+  filter {
+    name   = "name"
+    values = ["${var.ami_name}"]
+  }
+}

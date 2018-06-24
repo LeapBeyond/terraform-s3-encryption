@@ -1,20 +1,6 @@
 # ----------------------------------------------------------------------------------------
 # setup an EC2 instance
 # ----------------------------------------------------------------------------------------
-data "aws_ami" "target_ami" {
-  most_recent = true
-
-  filter {
-    name   = "owner-alias"
-    values = ["amazon"]
-  }
-
-  filter {
-    name   = "name"
-    values = ["${var.ami_name}"]
-  }
-}
-
 resource "aws_instance" "testhost" {
   ami           = "${data.aws_ami.target_ami.id}"
   instance_type = "${var.instance_type}"
