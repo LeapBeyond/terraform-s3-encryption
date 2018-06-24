@@ -1,6 +1,15 @@
+# Compiled files
 *.tfstate
 *.tfstate.backup
-.DS_Store
+
+# Module directory
 .terraform/
-env.rc
+
+*.tfstate.backup
+*.tfstate
+.DS_Store
 terraform.tfvars
+*/env.rc
+*/data/*.pem
+*/data/*key
+*/data/*.pub
