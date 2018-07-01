@@ -1,6 +1,7 @@
 variable "aws_region" {}
 variable "base_name" {}
 variable "inbound_cidr" {}
+variable "bucket_arn" {}
 
 variable "tags" {
   type = "map"

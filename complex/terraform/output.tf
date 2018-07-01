@@ -6,9 +6,9 @@ output "subnet_id" {
   value = "${module.instance.subnet_id}"
 }
 
-# output "bucket_name" {
-#   value = "${module.s3.bucket_name}"
-# }
+output "bucket_name" {
+  value = "${module.s3.bucket_name}"
+}
 
 output "public_dns" {
   value = "${module.instance.public_dns}"

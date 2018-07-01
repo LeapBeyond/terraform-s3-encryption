@@ -15,58 +15,57 @@ resource "aws_default_security_group" "test_default" {
 # ----------------------------------------------------------------------------------------
 # setup instance profile
 # ----------------------------------------------------------------------------------------
-# resource "aws_iam_role" "testhost" {
-#   name        = "${var.base_name}"
-#   description = "privileges for the test instance"
-#
-#   assume_role_policy = <<EOF
-# {
-#   "Version": "2012-10-17",
-#   "Statement": [
-#     {
-#       "Effect": "Allow",
-#       "Principal": {
-#         "Service": "ec2.amazonaws.com"
-#       },
-#       "Action": "sts:AssumeRole"
-#     }
-#   ]
-# }
-# EOF
-# }
-#
-# resource "aws_iam_policy" "testhost" {
-#   name        = "${var.base_name}"
-#   description = "allow access to specific bucket"
-#
-#   policy = <<EOF
-# {
-#   "Version": "2012-10-17",
-#   "Statement": [
-#     {
-#       "Effect": "Allow",
-#       "Action": [
-#         "s3:List*",
-#         "s3:Get*",
-#         "s3:PutObject"
-#       ],
-#       "Resource": [
-#         "${aws_s3_bucket.ssetest.arn}",
-#         "${aws_s3_bucket.ssetest.arn}/*"
-#       ]
-#     }
-#   ]
-# }
-# EOF
-# }
-#
-# resource "aws_iam_role_policy_attachment" "testhost" {
-#   role       = "${aws_iam_role.testhost.name}"
-#   policy_arn = "${aws_iam_policy.testhost.arn}"
-# }
-#
-# resource "aws_iam_instance_profile" "testhost" {
-#   name = "${aws_iam_role.testhost.name}"
-#   role = "${aws_iam_role.testhost.id}"
-# }
+resource "aws_iam_role" "testhost" {
+  name        = "${var.base_name}"
+  description = "privileges for the test instance"
 
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "testhost" {
+  name        = "${var.base_name}"
+  description = "allow access to specific bucket"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:List*",
+        "s3:Get*",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "${var.bucket_arn}",
+        "${var.bucket_arn}/*"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "testhost" {
+  role       = "${aws_iam_role.testhost.name}"
+  policy_arn = "${aws_iam_policy.testhost.arn}"
+}
+
+resource "aws_iam_instance_profile" "testhost" {
+  name = "${aws_iam_role.testhost.name}"
+  role = "${aws_iam_role.testhost.id}"
+}
