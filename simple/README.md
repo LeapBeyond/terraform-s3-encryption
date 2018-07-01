@@ -103,14 +103,14 @@ This file also sets up the VPC Endpoint for S3 - this is useful when constrainin
 
 Note that we are creating a specific route table and attaching it to the subnet. If this is not done, the subnet just inherits the default route table in the VPC. This is dangerous, as changes to this route table can easily alter desired behaviour for the subnet unintentionally. A useful best practice is to remove route table entries from the default route table, and then not use it for anything.
 
-## security.tf
+### security.tf
 The first part illustrates another useful best practice - Terraform can "take over" the default security group and default NACL for the VPC. By not specifying any rules, they both reduce to "deny all traffic from/to everywhere". Then if these are ever used accidentally, you will not accidentally open up traffic you thought was closed.
 
 The rest of the file is creating the role and profile to be used by the EC2 instance. This is strongly limited to just the desired S3 API calls - it's always best to limit access as much as possible up front, and open up later if you need to.
 
 Of interest is that we do not need to specify that the role has access to KMS or the KMS key. This is one of the nice features of the way in which SSE has been implemented: KMS is called on the principal's behalf by S3, and the principal does not itself need to call the KMS API. You will see below the other part of this is that the KMS Key has a policy indicating which principal's can use it.
 
-## s3.tf
+### s3.tf
 The specification to use SSE is very simple, as you can see. The bucket policy is a bit more complicated, even if it looks very simple, as S3 bucket policies are themselves complicated. While at first glance it looks like this policy locks down the bucket to very narrow access, that's not entirely the case. By specifying a policy, then attempts to work against the bucket have to not match any of the "deny" statements, and match one of the "allow" statements. Where it gets complicated is:
 
   - by specifying a policy, what is not allowed is denied
@@ -120,12 +120,12 @@ This last bit is the one that will bite you - any principal that (for example) a
 
 Locking down the bucket further is beyond the scope of this demonstration at this time, although I may come back and tighten this up later.
 
-## kms.tf
+### kms.tf
 This sets up the KMS encyption key. The configuration of the key itself is pretty simple, but do note that we are setting a description, creating an alias and assigning tags - failure to do this can make it impossible to tell keys apart in the console. The policy is a little more interesting, as it grants access to use IAM principals, and then grants the required privileges just to the EC2 instance role. A caveat though - as with S3 privileges, a principal with broader access (e.g. having access to all keys) can override this constraint. This is useful for our example though, as it allows the administrator account used to execute Terraform access to the key when uploading test data.
 
 Again, note that there is a three-cornered arrangement required: the EC2 instance needs to be allowed to use S3, S3 is configured to use a particular key by default, and KMS checks that the ultimate caller (EC2) is allowed to use the key.
 
-## instance.tf
+### instance.tf
 The EC2 instance itself is trivial - we're using a recent Amazon Linux 2 instance because it's got the AWS CLI on it and is reasonably up to date. Note though that the first thing we do during provisioning is a `yum update`. Looking back at the `network.tf` file (and the security group here), you will note that we allow HTTP requests out to a specific CIDR block, which encompasses the internal AWS Yum repositories. The Security Group attached to the instance largely mirrors the NACL attached to the subnet we are launching in, and strictly speaking we could probably drop the NACLs, however using both is another useful safety measure in case an instance is launched with an over-open security group.
 
 Outgoing requests in this security group are more constrained than the NACL - we are limiting outgoing HTTPS requests on 443 to just the published CIDR blocks for the S3 API, which makes it useful that the EC2 instance does not need to directly call the KMS API. At first glance this looks like a really good security measure, but it comes with a huge drawback - only the whitelisted APIs can be called. If you go down this route, be aware that you will not be able to use Systems Manager or Inspector to manage the instance, and you potentially block off access to other useful API endpoints.
