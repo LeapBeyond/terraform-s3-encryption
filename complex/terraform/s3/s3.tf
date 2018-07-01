@@ -33,11 +33,12 @@ resource "aws_s3_bucket_policy" "ssetest" {
         "AWS": "${var.instance_account}"
       },
       "Action":[
+        "s3:List*",
         "s3:GetObject*",
         "s3:PutObject*",
         "s3:DeleteObject*"
       ],
-      "Resource": "${aws_s3_bucket.ssetest.arn}/*"
+      "Resource": ["${aws_s3_bucket.ssetest.arn}", "${aws_s3_bucket.ssetest.arn}/*"]
     }
   ]
 }

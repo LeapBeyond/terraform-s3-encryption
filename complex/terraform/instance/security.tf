@@ -47,8 +47,9 @@ resource "aws_iam_policy" "testhost" {
       "Effect": "Allow",
       "Action": [
         "s3:List*",
-        "s3:Get*",
-        "s3:PutObject"
+        "s3:GetObject*",
+        "s3:PutObject*",
+        "s3:DeleteObject*"
       ],
       "Resource": [
         "${var.bucket_arn}",
@@ -60,9 +61,59 @@ resource "aws_iam_policy" "testhost" {
 EOF
 }
 
+resource "aws_iam_policy" "use_kms" {
+  name        = "${var.base_name}-use-kms"
+  description = "allow use of encryption key from other account"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:RevokeGrant",
+        "kms:CreateGrant",
+        "kms:ListGrants"
+      ],
+      "Resource": "${var.key_arn}",
+      "Condition": {
+        "Bool": {
+          "kms:GrantIsForAWSResource": true
+        }
+      }
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:Decrypt",
+        "kms:Encrypt",
+        "kms:DescribeKey"
+      ],
+      "Resource": "${var.key_arn}"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "kms:GenerateDataKey",
+        "kms:ReEncryptTo",
+        "kms:ReEncryptFrom"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_iam_role_policy_attachment" "testhost" {
   role       = "${aws_iam_role.testhost.name}"
   policy_arn = "${aws_iam_policy.testhost.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "use_kms" {
+  role       = "${aws_iam_role.testhost.name}"
+  policy_arn = "${aws_iam_policy.use_kms.arn}"
 }
 
 resource "aws_iam_instance_profile" "testhost" {

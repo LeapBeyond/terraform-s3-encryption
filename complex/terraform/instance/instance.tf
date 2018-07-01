@@ -17,8 +17,10 @@ resource "aws_instance" "testhost" {
     volume_type = "gp2"
     volume_size = "${var.root_vol_size}"
   }
+
   tags        = "${merge(map("Name","s3ec2test"), var.tags)}"
   volume_tags = "${var.tags}"
+
   user_data = <<EOF
 #!/bin/bash
 yum update -y -q

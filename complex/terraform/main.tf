@@ -1,5 +1,6 @@
 module "account" {
   source = "./account"
+
   providers = {
     aws = "aws.instance"
   }
@@ -17,6 +18,7 @@ module "instance" {
   inbound_cidr = "${var.inbound_cidr}"
   tags         = "${var.tags}"
   bucket_arn   = "${module.s3.bucket_arn}"
+  key_arn      = "${module.s3.key_arn}"
 }
 
 module "s3" {
@@ -27,7 +29,7 @@ module "s3" {
   }
 
   instance_account = "${module.account.account_id}"
-  aws_region = "${var.aws_region}"
-  base_name  = "${var.base_name}"
-  tags       = "${var.tags}"
+  aws_region       = "${var.aws_region}"
+  base_name        = "${var.base_name}"
+  tags             = "${var.tags}"
 }
