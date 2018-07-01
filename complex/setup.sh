@@ -19,6 +19,7 @@ terraform init
 terraform apply -auto-approve \
   -var "aws_region=$AWS_DEFAULT_REGION" \
   -var "aws_instance_profile=$AWS_INSTANCE_PROFILE" \
+  -var "aws_s3_profile=$AWS_S3_PROFILE" \
   -var "base_name=$BASE_NAME" \
   -var "inbound_cidr=$CIDR"
 cd ..

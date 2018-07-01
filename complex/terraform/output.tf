@@ -1,23 +1,23 @@
 output "vpc_id" {
-  value = "${aws_vpc.test_vpc.id}"
+  value = "${module.instance.vpc_id}"
 }
 
 output "subnet_id" {
-  value = "${aws_subnet.ssetest.id}"
+  value = "${module.instance.subnet_id}"
 }
 
-output "bucket_name" {
-  value = "${aws_s3_bucket.ssetest.id}"
-}
+# output "bucket_name" {
+#   value = "${module.s3.bucket_name}"
+# }
 
 output "public_dns" {
-  value = "${aws_instance.testhost.public_dns}"
+  value = "${module.instance.public_dns}"
 }
 
 output "private_dns" {
-  value = "${aws_instance.testhost.private_dns}"
+  value = "${module.instance.private_dns}"
 }
 
 output "connect_string" {
-  value = "ssh -i data/${var.base_name}.pem ec2-user@${aws_instance.testhost.public_dns}"
+  value = "ssh -i data/${var.base_name}.pem ec2-user@${module.instance.public_dns}"
 }
