@@ -11,7 +11,7 @@ resource "aws_instance" "testhost" {
     "${aws_security_group.testhost.id}",
   ]
 
-  # iam_instance_profile = "${aws_iam_instance_profile.testhost.name}"
+  iam_instance_profile = "${aws_iam_instance_profile.testhost.name}"
 
   root_block_device = {
     volume_type = "gp2"
