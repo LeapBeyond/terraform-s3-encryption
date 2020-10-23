@@ -26,7 +26,7 @@ The following is a collection of materials around S3 policies in general, and so
 
 
 ## License
-Copyright 2018 Leap Beyond Analytics
+Copyright 2018 Leap Beyond Emerging Technologies B.V.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
